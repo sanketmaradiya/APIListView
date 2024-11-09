@@ -31,7 +31,9 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
-  type ItemProps = {title: string};
+  type ItemProps = {
+    title: string
+  };
 
   const Item = ({title}: ItemProps) => (
     <View >
