@@ -1,61 +1,78 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, FlatList,StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const HomeScreen = () => {
-
-  const [data, setData] = useState([]); // State to store fetched data
-  const [loading, setLoading] = useState(true); // State to manage loading status
-  const [error, setError] = useState(null); // State to store error messages
-
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        'https://jsonplaceholder.typicode.com/posts',
-      );
+      const response = await fetch('https://mocki.io/v1/7d252096-3dd5-4a87-8a27-6df736365a70');
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const json = await response.json();
-      console.log(json); // Check the response format in the console
-      setData(json); // Ensure this matches the structure of the response
+      console.log(json);
+      setData(json);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  type ItemProps = {
-    title: string
-  };
-
-  const Item = ({title}: ItemProps) => (
-    <View >
-      <Text >{title}</Text>
-    </View>
+  const Item = ({ title }: {title: string}) => (
+    <TouchableOpacity onPress={() => handlePress(Item)}>
+      <View style={styles.itemContainer}>
+        <Text style={styles.itemTitle}>{title}</Text>
+      </View>
+    </TouchableOpacity>
   );
+
+  const handlePress = (item) => {
+    console.log('Item clicked:', item);
+  };
 
   // Rendering logic
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
-  if (error) return <Text>Error: {error}</Text>;
+  if (error) return <Text style={styles.errorText}>Error: {error}</Text>;
 
   return (
-    <SafeAreaView>
-    <FlatList
-    data={data}
-    renderItem={Item}
-    keyExtractor={(item) => item.id.toString()}>
-    </FlatList>
-  </SafeAreaView>
-  )
-}
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <Item title={item.name} />}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </SafeAreaView>
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  itemContainer: {
+    padding: 15,
+    marginBottom: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+  },
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+});
