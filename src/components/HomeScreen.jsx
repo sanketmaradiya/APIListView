@@ -1,17 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  RefreshControl
+} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeScreen = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
   const navigation = useNavigation();
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://mocki.io/v1/7d252096-3dd5-4a87-8a27-6df736365a70');
+      const response = await fetch(
+        'https://mocki.io/v1/7d252096-3dd5-4a87-8a27-6df736365a70',
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -29,6 +41,17 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData().then(() => {
+      setRefreshing(false);
+    });
+  };
+
+  const handlePress = (item) => {
+    navigation.navigate('Profile', { item });
+  };
+
   const Item = ({ item }) => (
     <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.itemContainer}>
@@ -37,13 +60,21 @@ const HomeScreen = () => {
     </TouchableOpacity>
   );
 
-  const handlePress = (item) => {
-    navigation.navigate('Profile', { item });
-  };
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </SafeAreaView>
+    );
+  }
 
-  // Rendering logic
-  if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
-  if (error) return <Text style={styles.errorText}>Error: {error}</Text>;
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,6 +82,9 @@ const HomeScreen = () => {
         data={data}
         renderItem={({ item }) => <Item item={item} />}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );

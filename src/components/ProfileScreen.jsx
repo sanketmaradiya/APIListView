@@ -3,14 +3,23 @@ import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 
 const ProfileScreen = ({route}) => {
-  const {item} = route.params;
+  const {item} = route.params || {};  // Fallback if route.params is undefined
+
+  if (!item) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>No profile data available.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerContent}>
           <Image
             style={styles.avatar}
-            source={{uri: 'https://bootdey.com/img/Content/avatar/avatar2.png'}}
+            source={{uri: item.avatar || 'https://bootdey.com/img/Content/avatar/avatar3.png'}}
           />
           <Text style={styles.name}>{item.name}</Text>
         </View>
@@ -37,8 +46,13 @@ const ProfileScreen = ({route}) => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f4f4f4',
+  },
   header: {
     backgroundColor: '#00CED1',
+    paddingBottom: 20,
   },
   headerContent: {
     padding: 30,
@@ -47,7 +61,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 130,
     height: 130,
-    borderRadius: 63,
+    borderRadius: 65,
     borderWidth: 4,
     borderColor: 'white',
     marginBottom: 10,
@@ -58,23 +72,35 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   profileDetail: {
-    alignSelf: 'center',
-    marginTop: 200,
+    marginTop: -40,
     alignItems: 'center',
     flexDirection: 'row',
-    position: 'absolute',
+    justifyContent: 'space-around',
     backgroundColor: '#ffffff',
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
   },
   detailContent: {
-    margin: 10,
     alignItems: 'center',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#696969',
   },
   count: {
     fontSize: 18,
+    fontWeight: 'bold',
   },
-  textInfo: {
+  errorText: {
+    color: 'red',
     fontSize: 18,
+    textAlign: 'center',
     marginTop: 20,
-    color: '#696969',
   },
 });
