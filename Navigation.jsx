@@ -11,7 +11,8 @@ const Navigation = () => {
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Profile" component={ProfileScreen} />
+        <Drawer.Screen name="Profile" component={ProfileScreen}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   )

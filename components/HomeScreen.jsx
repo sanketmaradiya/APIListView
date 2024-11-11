@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeScreen = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     try {
@@ -27,16 +29,16 @@ const HomeScreen = () => {
     fetchData();
   }, []);
 
-  const Item = ({ title }: {title: string}) => (
-    <TouchableOpacity onPress={() => handlePress(Item)}>
+  const Item = ({ item }) => (
+    <TouchableOpacity onPress={() => handlePress(item)}>
       <View style={styles.itemContainer}>
-        <Text style={styles.itemTitle}>{title}</Text>
+        <Text style={styles.itemTitle}>{item.name}</Text>
       </View>
     </TouchableOpacity>
   );
 
   const handlePress = (item) => {
-    console.log('Item clicked:', item);
+    navigation.navigate('Profile', { item });
   };
 
   // Rendering logic
@@ -47,7 +49,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       <FlatList
         data={data}
-        renderItem={({ item }) => <Item title={item.name} />}
+        renderItem={({ item }) => <Item item={item} />}
         keyExtractor={(item) => item.id.toString()}
       />
     </SafeAreaView>
