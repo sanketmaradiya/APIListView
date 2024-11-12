@@ -86,3 +86,12 @@ const styles = StyleSheet.create({
     borderBottomColor: 'black',
   },
 });
+
+// [
+//   {title: 'A', data: ['Ajay', 'Amit', 'Aman']},
+//   {title: 'B', data: ['Billy', 'Bread', 'Ben']},
+//   {title: 'C', data: ['Charlie', 'Chris', 'Catherine']},
+//   {title: 'D', data: ['David', 'Diana', 'Derek']},
+//   {title: 'E', data: ['Eve', 'Elena', 'Edward']},
+//   {title: 'F', data: ['Frank', 'Fiona', 'Faith']},
+// ];

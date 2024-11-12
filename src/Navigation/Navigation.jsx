@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -9,60 +9,36 @@ import ContactListScreen from '../components/ContactListScreen';
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
-function DrawerStack({ navigation }) {
-  useEffect(() => {
-    const unsubscribeFocus = navigation.addListener('focus', (e) => {
-      navigation.setOptions({ drawerEnabled: false });
-    });
-    
-    const unsubscribeBlur = navigation.addListener('blur', (e) => {
-      navigation.setOptions({ drawerEnabled: true });
-    });
-
-    return () => {
-      unsubscribeFocus();
-      unsubscribeBlur();
-    };
-  }, [navigation]);
-
+function DrawerScreens() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
+    <Drawer.Navigator>
+      <Drawer.Screen 
         name="Home" 
         component={HomeScreen} 
-        options={{ headerShown: false }} 
       />
-      <Stack.Screen 
-        name="Profile" 
-        component={ProfileScreen} 
-        options={{ 
-          headerShown: true,
-          gestureEnabled: false,
-        }} 
-      />
-    </Stack.Navigator>
-  );
-}
-
-function ProfileStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen 
+      <Drawer.Screen 
         name="Contacts" 
-        component={ContactListScreen} 
-        options={{ headerShown: false }} 
+        component={ContactListScreen}
       />
-    </Stack.Navigator>
+    </Drawer.Navigator>
   );
 }
 
 const Navigation = () => {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={DrawerStack} />
-        <Drawer.Screen name="Contacts" component={ProfileStack} />
-      </Drawer.Navigator>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen 
+          name="Home" 
+          component={DrawerScreens} 
+          options={{ drawerLabel: 'Home' , headerShown : false}}
+        />
+        <Stack.Screen 
+          name="Profile" 
+          component={ProfileScreen} 
+          options={{ drawerLabel: 'Profile', headerShown : false}}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

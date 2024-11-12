@@ -1,9 +1,32 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image, Share} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import React from 'react';
+import CustomNavBar from './CustomNavBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const ProfileScreen = ({route}) => {
-  const {item} = route.params || {};  // Fallback if route.params is undefined
+  const navigation = useNavigation();
+  const {item} = route.params || {}; // Fallback if route.params is undefined
+
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message: `Check out ${item.name}'s Followers are ${item.Follower} profile on our app!`,
+        url: 'https://bootdey.com/img/Content/avatar/avatar3.png',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log('Shared with activity type:', result.activityType);
+        } else {
+          console.log('Shared successfully');
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share dismissed');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
 
   if (!item) {
     return (
@@ -14,32 +37,44 @@ const ProfileScreen = ({route}) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <Image
-            style={styles.avatar}
-            source={{uri: item.avatar || 'https://bootdey.com/img/Content/avatar/avatar3.png'}}
-          />
-          <Text style={styles.name}>{item.name}</Text>
+    <SafeAreaView style={styles.container}>
+      <View>
+        <CustomNavBar
+          title={'Profile'}
+          rightIcon={'share-alt'}
+          leftBtn={() => navigation.pop()}
+          rightBtn={onShare}
+        />
+        <View style={styles.header}>
+          <View style={styles.headerContent}>
+            <Image
+              style={styles.avatar}
+              source={{
+                uri:
+                  item.avatar ||
+                  'https://bootdey.com/img/Content/avatar/avatar3.png',
+              }}
+            />
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.profileDetail}>
-        <View style={styles.detailContent}>
-          <Text style={styles.title}>Photos</Text>
-          <Text style={styles.count}>{item.numberPhotos}</Text>
-        </View>
-        <View style={styles.detailContent}>
-          <Text style={styles.title}>Followers</Text>
-          <Text style={styles.count}>{item.Follower}</Text>
-        </View>
-        <View style={styles.detailContent}>
-          <Text style={styles.title}>Following</Text>
-          <Text style={styles.count}>{item.Following}</Text>
+        <View style={styles.profileDetail}>
+          <View style={styles.detailContent}>
+            <Text style={styles.title}>Photos</Text>
+            <Text style={styles.count}>{item.numberPhotos}</Text>
+          </View>
+          <View style={styles.detailContent}>
+            <Text style={styles.title}>Followers</Text>
+            <Text style={styles.count}>{item.Follower}</Text>
+          </View>
+          <View style={styles.detailContent}>
+            <Text style={styles.title}>Following</Text>
+            <Text style={styles.count}>{item.Following}</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -52,10 +87,11 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#00CED1',
+    height: '230',
     paddingBottom: 20,
   },
   headerContent: {
-    padding: 30,
+    padding: 10,
     alignItems: 'center',
   },
   avatar: {
@@ -81,7 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginHorizontal: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
